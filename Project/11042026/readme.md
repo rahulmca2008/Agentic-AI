@@ -1,0 +1,2 @@
+The project is to build chrome plugin for browsing assist. Browsing assist where in highlighted text on webpage should translate in english if cotent in any other language and should summarize it. This project would integrate with "gemini-3-flash-preview" for highlighted text translation and summarization. I will add api_key in env file. It would display summarization in dialogue box.
+https://youtu.be/MvVm7w1lDI4

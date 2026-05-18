@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Engineer Job Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border: #334155;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #818CF8, #C084FC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portal-select {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .portal-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .portal-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+            transform: translateX(4px);
+        }
+
+        .portal-btn.active {
+            background-color: rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .action-section {
+            margin-top: auto;
+        }
+
+        .trigger-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .trigger-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+
+        /* Charts / Complex Data Area */
+        .data-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .data-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Bar Chart simple implementation */
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            width: 100px;
+            font-size: 0.875rem;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 999px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #818CF8);
+            border-radius: 999px;
+            transition: width 1s ease-in-out;
+        }
+
+        .bar-value {
+            width: 40px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        /* Table */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>Job Agent System</h2>
+        
+        <div class="portal-select" id="portalSelect">
+            <button class="portal-btn active" data-portal="All">All Portals</button>
+            <button class="portal-btn" data-portal="Naukri">Naukri.com</button>
+            <button class="portal-btn" data-portal="Talent500">Talent500</button>
+            <button class="portal-btn" data-portal="Hirist">Hirist.tech</button>
+        </div>
+
+        <div class="action-section">
+            <button class="trigger-btn" id="triggerBtn">Trigger Scraper Agents</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <h1>Dashboard Overview</h1>
+            <span id="currentPortalLabel" style="color: var(--text-muted); font-weight: 500;">Viewing: All Portals</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="label">Total Open Jobs (AI Engineer)</span>
+                <span class="value" id="totalJobs">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">New Jobs (< 3 Days)</span>
+                <span class="value" id="newJobs" style="color: var(--success)">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">Older Jobs (> 7 Days)</span>
+                <span class="value" id="oldJobs" style="color: var(--danger)">0</span>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <div class="data-card">
+                <h3>Job Age Distribution</h3>
+                <div class="bar-container" id="ageChart">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <div class="data-card">
+                <h3>Experience Requirements</h3>
+                <div class="bar-container" id="expChart">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <h3 style="margin-bottom: 1rem; color: var(--text-muted);">Recent Job Listings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Portal</th>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Experience</th>
+                        <th>Age (Days)</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="jobTableBody">
+                    <!-- Populated via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        let currentPortal = 'All';
+
+        // Select portal logic
+        document.querySelectorAll('.portal-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.portal-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentPortal = e.target.getAttribute('data-portal');
+                document.getElementById('currentPortalLabel').innerText = `Viewing: ${currentPortal}`;
+                fetchData();
+            });
+        });
+
+        // Trigger Scrape Logic
+        document.getElementById('triggerBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('triggerBtn');
+            btn.innerText = 'Scraping Triggered...';
+            btn.style.backgroundColor = 'var(--warning)';
+            
+            try {
+                await fetch(`/api/scrape?portal=${currentPortal}`, { method: 'POST' });
+                alert(`Scraper for ${currentPortal} triggered! Check back in a minute.`);
+            } catch(e) {
+                console.error(e);
+            }
+            
+            setTimeout(() => {
+                btn.innerText = 'Trigger Scraper Agents';
+                btn.style.backgroundColor = 'var(--primary)';
+            }, 3000);
+        });
+
+        // Fetch Data Logic
+        async function fetchData() {
+            try {
+                const res = await fetch(`/api/stats?portal=${currentPortal}`);
+                const data = await res.json();
+                
+                // Update Total
+                document.getElementById('totalJobs').innerText = data.total;
+                document.getElementById('newJobs').innerText = data.age_distribution['< 3 days'];
+                document.getElementById('oldJobs').innerText = data.age_distribution['> 7 days'];
+
+                // Update Age Chart
+                updateBarChart('ageChart', data.age_distribution);
+
+                // Update Experience Chart
+                updateBarChart('expChart', data.experience_levels);
+                
+                // Update Table
+                const tbody = document.getElementById('jobTableBody');
+                tbody.innerHTML = '';
+                
+                // Show latest 20 jobs
+                const displayJobs = data.jobs.slice(-20).reverse();
+                
+                displayJobs.forEach(job => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${job.portal}</td>
+                        <td><strong>${job.title}</strong></td>
+                        <td>${job.company}</td>
+                        <td>${job.experience_level}</td>
+                        <td>${job.posted_age_days}</td>
+                        <td><a href="${job.job_url}" target="_blank">View Job</a></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch(e) {
+                console.error('Error fetching data:', e);
+            }
+        }
+
+        function updateBarChart(containerId, dataObj) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            // Find max for scaling
+            const max = Math.max(...Object.values(dataObj), 1); // prevent division by zero
+
+            for (const [label, val] of Object.entries(dataObj)) {
+                const percent = (val / max) * 100;
+                
+                const row = document.createElement('div');
+                row.className = 'bar-row';
+                
+                row.innerHTML = `
+                    <div class="bar-label">${label}</div>
+                    <div class="bar-wrapper">
+                        <div class="bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="bar-value">${val}</div>
+                `;
+                
+                container.appendChild(row);
+                
+                // Animate width
+                setTimeout(() => {
+                    row.querySelector('.bar-fill').style.width = `${percent}%`;
+                }, 100);
+            }
+        }
+
+        // Initial fetch
+        fetchData();
+    </script>
+</body>
+</html>
